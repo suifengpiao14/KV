@@ -1,4 +1,4 @@
-module github.com/suifengpiao14/KV
+module github.com/suifengpiao14/kv
 
 go 1.17
 
