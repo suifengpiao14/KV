@@ -3,7 +3,6 @@ module github.com/suifengpiao14/KV
 go 1.17
 
 require (
-	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.8.1
 	github.com/suifengpiao14/dml v0.0.10
 	github.com/tidwall/gjson v1.14.4
@@ -27,6 +26,7 @@ require (
 	github.com/pingcap/parser v0.0.0-20190123063514-f8c3dff115d5 // indirect
 	github.com/pingcap/tidb v0.0.0-20190108123336-c68ee7318319 // indirect
 	github.com/pingcap/tipb v0.0.0-20190107072121-abbec73437b7 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20170806203942-52369c62f446 // indirect
 	github.com/shirou/gopsutil v2.18.10+incompatible // indirect
