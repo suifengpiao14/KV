@@ -14,10 +14,6 @@ type KV struct {
 	Value string
 }
 
-var BuildInKeyOrder = func(kv KV) (keyOrder int) {
-	return 0
-}
-
 type KVS []KV
 
 func (kvs KVS) Json() (jsonStr string) {
@@ -118,10 +114,6 @@ func (kvs *KVS) FillterByPrefix(prefix string) (newKVs KVS) {
 	}
 	return newKVs
 }
-
-func (kvs KVS) Len() int           { return len(kvs) }
-func (kvs KVS) Swap(i, j int)      { kvs[i], kvs[j] = kvs[j], kvs[i] }
-func (kvs KVS) Less(i, j int) bool { return BuildInKeyOrder(kvs[i]) < BuildInKeyOrder(kvs[j]) }
 
 //JsonToKVS 将json 转换为key->value 对,key 的规则为github.com/tidwall/gjson 的path
 func JsonToKVS(jsonStr string) (kvs KVS) {
