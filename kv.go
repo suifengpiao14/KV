@@ -19,8 +19,7 @@ type KVS []KV
 func (kvs KVS) Json() (jsonStr string) {
 	var err error
 	for _, kv := range kvs {
-		value := strings.TrimSpace(kv.Value)
-		if len(value) > 0 && (value[0] == '{' || value[0] == '[') && gjson.Valid(value) {
+		if IsJsonStr(kv.Value) {
 			jsonStr, err = sjson.SetRaw(jsonStr, kv.Key, kv.Value)
 			if err != nil {
 				panic(err)
@@ -204,4 +203,12 @@ func getAllJsonResult(result gjson.Result) (allResult []gjson.Result) {
 		return true
 	})
 	return
+}
+
+//IsJsonStr 判断是否为json字符串
+func IsJsonStr(str string) (yes bool) {
+	str = strings.TrimSpace(str)
+	yes = len(str) > 0 && (str[0] == '{' || str[0] == '[') && gjson.Valid(str)
+	return yes
+
 }
