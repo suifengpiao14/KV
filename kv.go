@@ -117,6 +117,11 @@ func (kvs KVS) Order(keyOrder []string) (orderedKVS KVS) {
 	return orderedKVS
 }
 
+// Add 新增,不排除重复
+func (kvs *KVS) Add(addkvs ...KV) {
+	*kvs = append(*kvs, addkvs...)
+}
+
 // AddIgnore 引用解析到的kv，批量添加
 func (kvs *KVS) AddIgnore(addkvs ...KV) {
 	for _, addKv := range addkvs {
