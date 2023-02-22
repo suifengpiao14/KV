@@ -56,13 +56,61 @@ func (kvs KVS) GetNextIndex(keyPrefix string, keySeparator string) (maxIndex int
 	return maxIndex
 }
 
-func (kvs *KVS) Exists(key string) (exists bool) {
-	for _, kv := range *kvs {
+func (kvs KVS) Exists(key string) (exists bool) {
+	for _, kv := range kvs {
 		if key == kv.Key {
 			return true
 		}
 	}
 	return false
+}
+
+func (kvs KVS) GetFirstByKey(key string) (kv KV, index int) {
+	index = -1
+	for i, tplKV := range kvs {
+		if key == tplKV.Key {
+			return tplKV, i
+		}
+	}
+	return kv, index
+}
+
+func (kvs KVS) GetByIndex(index int) (kv KV, exists bool) {
+	if index > len(kvs)-1 || index < 0 {
+		return kv, false
+	}
+	kv = kvs[index]
+	return kv, true
+}
+
+//Order 对kv 集合排序
+func (kvs KVS) Order(keyOrder []string) (orderedKVS KVS) {
+	orderedKVS = make(KVS, 0)
+	orderIndex := make([]int, 0)
+	// 确定顺序
+	for _, key := range keyOrder {
+		kv, index := kvs.GetFirstByKey(key)
+		if index < 0 {
+			continue
+		}
+		orderIndex = append(orderIndex, index)
+		orderedKVS = append(orderedKVS, kv)
+	}
+
+	if len(orderIndex) == len(kvs) {
+		return orderedKVS
+	}
+	//复制剩余kv
+	for i, kv := range kvs {
+		for _, index := range orderIndex {
+			if i == index {
+				continue
+			}
+		}
+		orderedKVS = append(orderedKVS, kv)
+	}
+
+	return orderedKVS
 }
 
 // AddIgnore 引用解析到的kv，批量添加
