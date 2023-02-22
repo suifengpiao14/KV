@@ -1,4 +1,4 @@
-package kv
+package kvstruct
 
 import (
 	"fmt"
@@ -102,12 +102,16 @@ func (kvs KVS) Order(keyOrder []string) (orderedKVS KVS) {
 	}
 	//复制剩余kv
 	for i, kv := range kvs {
+		notExists := true
 		for _, index := range orderIndex {
 			if i == index {
-				continue
+				notExists = false
+				break
 			}
 		}
-		orderedKVS = append(orderedKVS, kv)
+		if notExists {
+			orderedKVS = append(orderedKVS, kv)
+		}
 	}
 
 	return orderedKVS
