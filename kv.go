@@ -53,7 +53,7 @@ func (kvs KVS) Json(WithType bool) (jsonStr string, err error) {
 			if err != nil {
 				return "", err
 			}
-			return jsonStr, nil
+			continue
 		}
 
 		var value interface{}

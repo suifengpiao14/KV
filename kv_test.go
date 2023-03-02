@@ -9,16 +9,31 @@ import (
 )
 
 func TestKVSJson(t *testing.T) {
-	kv := KV{
-		Type:  KV_TYPE_BOOLEAN,
-		Key:   "doc.example.response.200.language",
-		Value: `是`,
-	}
-	kvs := make(KVS, 0)
-	kvs = append(kvs, kv)
-	jsonStr, err := kvs.Json(true)
-	require.NoError(t, err)
-	fmt.Println(jsonStr)
+	t.Run("boolen", func(t *testing.T) {
+		kv := KV{
+			Type:  KV_TYPE_BOOLEAN,
+			Key:   "doc.example.response.200.language",
+			Value: `是`,
+		}
+		kvs := make(KVS, 0)
+		kvs = append(kvs, kv)
+		jsonStr, err := kvs.Json(true)
+		require.NoError(t, err)
+		fmt.Println(jsonStr)
+	})
+
+	t.Run("many", func(t *testing.T) {
+		kv := KV{
+			Key:   "doc.parameter.response.16.type",
+			Value: "string",
+		}
+		kvs := make(KVS, 0)
+		kvs = append(kvs, kv)
+		kvs = append(kvs, KV{Key: "a", Value: "b"})
+		jsonStr, err := kvs.Json(false)
+		require.NoError(t, err)
+		fmt.Println(jsonStr)
+	})
 }
 
 func TestJsonToKVS(t *testing.T) {
