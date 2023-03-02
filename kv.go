@@ -129,7 +129,7 @@ func (kvs KVS) GetByIndex(index int) (kv KV, exists bool) {
 	return kv, true
 }
 
-//Order 对kv 集合排序
+// Order 对kv 集合排序
 func (kvs KVS) Order(keyOrder []string) (orderedKVS KVS) {
 	orderedKVS = make(KVS, 0)
 	orderIndex := make([]int, 0)
@@ -218,8 +218,8 @@ func (kvs *KVS) FillterByPrefix(prefix string) (newKVs KVS) {
 	return newKVs
 }
 
-//JsonToKVS 将json 转换为key->value 对,key 的规则为github.com/tidwall/gjson 的path
-func JsonToKVS(jsonStr string) (kvs KVS) {
+// JsonToKVS 将json 转换为key->value 对,key 的规则为github.com/tidwall/gjson 的path
+func JsonToKVS(jsonStr string, namespace string) (kvs KVS) {
 	kvs = make(KVS, 0)
 	paths := make([]string, 0)
 	result := gjson.Parse(jsonStr)
@@ -230,7 +230,7 @@ func JsonToKVS(jsonStr string) (kvs KVS) {
 	}
 	for _, path := range paths {
 		kv := KV{
-			Key:   path,
+			Key:   fmt.Sprintf("%s.%s", strings.Trim(namespace, "."), strings.Trim(path, ".")),
 			Value: result.Get(path).String(),
 		}
 		kvs = append(kvs, kv)
@@ -252,7 +252,7 @@ func getAllJsonResult(result gjson.Result) (allResult []gjson.Result) {
 	return
 }
 
-//IsJsonStr 判断是否为json字符串
+// IsJsonStr 判断是否为json字符串
 func IsJsonStr(str string) (yes bool) {
 	str = strings.TrimSpace(str)
 	yes = len(str) > 0 && (str[0] == '{' || str[0] == '[') && gjson.Valid(str)
