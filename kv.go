@@ -9,18 +9,20 @@ import (
 	"github.com/tidwall/sjson"
 )
 
+type KVType string
+
 const (
-	KV_TYPE_STRING  = "string"
-	KV_TYPE_INT     = "int"
-	KV_TYPE_BOOLEAN = "boolean"
-	KV_TYPE_FLOAT   = "float"
-	KV_TYPE_JSON    = "json"
+	KV_TYPE_STRING  = KVType("string")
+	KV_TYPE_INT     = KVType("int")
+	KV_TYPE_BOOLEAN = KVType("boolean")
+	KV_TYPE_FLOAT   = KVType("float")
+	KV_TYPE_JSON    = KVType("json")
 )
 
 type KV struct {
-	Type  string
-	Key   string
-	Value string
+	Type  KVType `json:"type"`
+	Key   string `json:"key"`
+	Value string `json:"value"`
 }
 
 type KVS []KV
