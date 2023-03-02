@@ -9,29 +9,76 @@ import (
 	"github.com/tidwall/sjson"
 )
 
+const (
+	KV_TYPE_STRING  = "string"
+	KV_TYPE_INT     = "int"
+	KV_TYPE_BOOLEAN = "boolean"
+	KV_TYPE_FLOAT   = "float"
+	KV_TYPE_JSON    = "json"
+)
+
 type KV struct {
+	Type  string
 	Key   string
 	Value string
 }
 
 type KVS []KV
 
-func (kvs KVS) Json() (jsonStr string) {
-	var err error
+//Deprecated
+func (kvs KVS) Json(WithType bool) (jsonStr string, err error) {
 	for _, kv := range kvs {
-		if IsJsonStr(kv.Value) {
+		// 任何情况,都处理特殊处理json和boolean 类型
+		if kv.Type == KV_TYPE_JSON {
 			jsonStr, err = sjson.SetRaw(jsonStr, kv.Key, kv.Value)
 			if err != nil {
-				panic(err)
+				return "", err
 			}
 			continue
 		}
-		jsonStr, err = sjson.Set(jsonStr, kv.Key, kv.Value)
+
+		strValue := kv.Value
+		if kv.Type == KV_TYPE_BOOLEAN {
+			switch strings.ToLower(strValue) {
+			case "是", "对", "1", "yes":
+				strValue = "true"
+			case "否", "错", "0", "no":
+				strValue = "false"
+			}
+		}
+		if !WithType {
+			jsonStr, err = sjson.Set(jsonStr, kv.Key, strValue)
+			if err != nil {
+				return "", err
+			}
+			return jsonStr, nil
+		}
+
+		var value interface{}
+		value = strValue
+		switch kv.Type {
+		case KV_TYPE_BOOLEAN:
+			value, err = strconv.ParseBool(strValue)
+			if err != nil {
+				return "", err
+			}
+		case KV_TYPE_INT:
+			value, err = strconv.Atoi(strValue)
+			if err != nil {
+				return "", err
+			}
+		case KV_TYPE_FLOAT:
+			value, err = strconv.ParseFloat(strValue, 64)
+			if err != nil {
+				return "", err
+			}
+		}
+		jsonStr, err = sjson.Set(jsonStr, kv.Key, value)
 		if err != nil {
-			panic(err)
+			return "", err
 		}
 	}
-	return jsonStr
+	return jsonStr, nil
 }
 
 // GetIndex 获取相同前置后带数字名称的最大数字,加1后作为新元素下标,返回

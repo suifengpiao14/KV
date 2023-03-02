@@ -5,16 +5,20 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestKVSJson(t *testing.T) {
 	kv := KV{
+		Type:  KV_TYPE_BOOLEAN,
 		Key:   "doc.example.response.200.language",
-		Value: "json",
+		Value: `是`,
 	}
 	kvs := make(KVS, 0)
 	kvs = append(kvs, kv)
-	fmt.Println(kvs.Json())
+	jsonStr, err := kvs.Json(true)
+	require.NoError(t, err)
+	fmt.Println(jsonStr)
 }
 
 func TestJsonToKVS(t *testing.T) {
