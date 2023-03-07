@@ -173,12 +173,16 @@ func (kvs *KVS) Add(addkvs ...KV) {
 // AddIgnore 引用解析到的kv，批量添加
 func (kvs *KVS) AddIgnore(addkvs ...KV) {
 	for _, addKv := range addkvs {
+		exists := false
 		for _, existsKv := range *kvs {
 			if existsKv.Key == addKv.Key {
-				continue
+				exists = true
+				break
 			}
 		}
-		*kvs = append(*kvs, addKv)
+		if !exists {
+			*kvs = append(*kvs, addKv)
+		}
 	}
 }
 
