@@ -184,17 +184,17 @@ func (kvs *KVS) AddIgnore(addkvs ...KV) {
 
 // AddReplace 模板解析后获取的kv，批量新增/替换
 func (kvs *KVS) AddReplace(replacekvs ...KV) {
-	for _, addKv := range replacekvs {
+	for _, replaceKv := range replacekvs {
 		exists := false
 		for i, existsKv := range *kvs {
-			if existsKv.Key == addKv.Key {
-				(*kvs)[i] = addKv
+			if existsKv.Key == replaceKv.Key {
+				(*kvs)[i] = replaceKv
 				exists = true
 				break
 			}
 		}
 		if !exists {
-			*kvs = append(*kvs, addKv)
+			*kvs = append(*kvs, replaceKv)
 		}
 	}
 }
