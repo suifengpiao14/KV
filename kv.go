@@ -27,7 +27,7 @@ type KV struct {
 
 type KVS []KV
 
-//Deprecated
+// Deprecated
 func (kvs KVS) Json(WithType bool) (jsonStr string, err error) {
 	for _, kv := range kvs {
 		// 任何情况,都处理特殊处理json和boolean 类型
@@ -230,9 +230,13 @@ func JsonToKVS(jsonStr string, namespace string) (kvs KVS) {
 		subPath := result.Path(jsonStr)
 		paths = append(paths, subPath)
 	}
+	namespace = strings.TrimLeft(namespace, ".")
+	if namespace != "" {
+		namespace = fmt.Sprintf("%s.", namespace)
+	}
 	for _, path := range paths {
 		kv := KV{
-			Key:   fmt.Sprintf("%s.%s", strings.Trim(namespace, "."), strings.Trim(path, ".")),
+			Key:   fmt.Sprintf("%s%s", namespace, strings.Trim(path, ".")),
 			Value: result.Get(path).String(),
 		}
 		kvs = append(kvs, kv)
@@ -260,4 +264,14 @@ func IsJsonStr(str string) (yes bool) {
 	yes = len(str) > 0 && (str[0] == '{' || str[0] == '[') && gjson.Valid(str)
 	return yes
 
+}
+
+// FormatValue2String 将json 中所有的value转换成字符串
+func FormatValue2String(jsonstr string, prefix string) (strJosn string, err error) {
+	kvs := JsonToKVS(jsonstr, prefix)
+	strJosn, err = kvs.Json(false)
+	if err != nil {
+		return "", err
+	}
+	return strJosn, nil
 }

@@ -42,6 +42,13 @@ func TestJsonToKVS(t *testing.T) {
 	fmt.Println(kvs)
 
 }
+func TestFormatValue2String(t *testing.T) {
+	jsonstr := `{"id":1,"list":["3",4,"aa"],"jsonKey":"{\"id\":4}"}`
+	newJsonstr, err := FormatValue2String(jsonstr, "root")
+	require.NoError(t, err)
+	fmt.Println(newJsonstr)
+
+}
 
 func TestGetNextIndex(t *testing.T) {
 	keySeparator := "."
