@@ -173,28 +173,32 @@ func (kvs *KVS) Add(addkvs ...KV) {
 // AddIgnore 引用解析到的kv，批量添加
 func (kvs *KVS) AddIgnore(addkvs ...KV) {
 	for _, addKv := range addkvs {
+		exists := false
 		for _, existsKv := range *kvs {
 			if existsKv.Key == addKv.Key {
-				continue
-			}
-		}
-		*kvs = append(*kvs, addKv)
-	}
-}
-
-// AddReplace 模板解析后获取的kv，批量新增/替换
-func (kvs *KVS) AddReplace(replacekvs ...KV) {
-	for _, addKv := range replacekvs {
-		exists := false
-		for i, existsKv := range *kvs {
-			if existsKv.Key == addKv.Key {
-				(*kvs)[i] = addKv
 				exists = true
 				break
 			}
 		}
 		if !exists {
 			*kvs = append(*kvs, addKv)
+		}
+	}
+}
+
+// AddReplace 模板解析后获取的kv，批量新增/替换
+func (kvs *KVS) AddReplace(replacekvs ...KV) {
+	for _, replaceKv := range replacekvs {
+		exists := false
+		for i, existsKv := range *kvs {
+			if existsKv.Key == replaceKv.Key {
+				(*kvs)[i] = replaceKv
+				exists = true
+				break
+			}
+		}
+		if !exists {
+			*kvs = append(*kvs, replaceKv)
 		}
 	}
 }
