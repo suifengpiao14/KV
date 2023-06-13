@@ -165,6 +165,14 @@ func (kvs KVS) Order(keyOrder []string) (orderedKVS KVS) {
 	return orderedKVS
 }
 
+func (kvs KVS) Map() (m map[string]string) {
+	m = make(map[string]string, 0)
+	for _, kv := range kvs {
+		m[kv.Key] = kv.Value
+	}
+	return m
+}
+
 // Add 新增,不排除重复
 func (kvs *KVS) Add(addkvs ...KV) {
 	*kvs = append(*kvs, addkvs...)
