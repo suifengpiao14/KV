@@ -3,6 +3,7 @@ module github.com/suifengpiao14/kvstruct
 go 1.17
 
 require (
+	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.8.1
 	github.com/tidwall/gjson v1.14.4
 	github.com/tidwall/sjson v1.2.5

@@ -5,6 +5,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/pkg/errors"
+
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
 )
@@ -236,6 +238,10 @@ func (kvs *KVS) FillterByPrefix(prefix string) (newKVs KVS) {
 func JsonToKVS(jsonStr string, namespace string) (kvs KVS) {
 	kvs = make(KVS, 0)
 	paths := make([]string, 0)
+	if !gjson.Valid(jsonStr) {
+		err := errors.Errorf("invalid json:\n%s\n", jsonStr)
+		panic(err)
+	}
 	result := gjson.Parse(jsonStr)
 	allResult := getAllJsonResult(result)
 	for _, result := range allResult {
