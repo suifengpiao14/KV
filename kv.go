@@ -213,6 +213,42 @@ func (kvs *KVS) AddReplace(replacekvs ...KV) {
 	}
 }
 
+//AppendRow 在二维数组内增加行,prefix 会自动补齐后缀.
+func (kvs *KVS) AppendRows(rows KVS, prefix string) {
+	prefix = fmt.Sprintf("%s.", strings.TrimRight(prefix, ".")) // 确保以.结尾
+	existsKvs := kvs.FillterByPrefix(prefix)
+	if len(existsKvs) == 0 {
+		kvs.AddReplace(rows...)
+		return
+	}
+	maxIndex := -1
+	for _, kv := range existsKvs {
+		number := strings.TrimPrefix(kv.Key, prefix)
+		dotIndex := strings.Index(number, ".")
+		if dotIndex > -1 {
+			number = number[:dotIndex]
+		}
+		intNumber, _ := strconv.Atoi(number) // 转不了int，直接认为0开始，所以err忽略
+		if maxIndex < intNumber {
+			maxIndex = intNumber
+		}
+	}
+	//生成新的下标
+	newIndex := maxIndex + 1
+	for _, kv := range rows {
+		ext := ""
+		number := strings.Trim(strings.TrimPrefix(kv.Key, prefix), ".")
+		dotIndex := strings.Index(number, ".")
+		if dotIndex > -1 {
+			ext = number[dotIndex:] // 先保留ext
+			number = number[:dotIndex]
+		}
+		intNumber, _ := strconv.Atoi(number) // 转不了int，直接认为0开始，所以err忽略
+		newNumber := newIndex + intNumber
+		kv.Key = fmt.Sprintf("%s%d%s", prefix, newNumber, ext)
+	}
+}
+
 // ReplacePrefix 引用解析获得的新数据，需要批量替换id前缀
 func (kvs *KVS) ReplacePrefix(old, new string) {
 	for i, kv := range *kvs {
