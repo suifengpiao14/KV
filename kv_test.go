@@ -108,3 +108,9 @@ func TestOrder(t *testing.T) {
 	}
 	assert.Equal(t, true, ok)
 }
+
+func TestArrSlic(t *testing.T) {
+	arr := []int{1, 2}
+	subArr := arr[1+1:]
+	fmt.Println(subArr)
+}

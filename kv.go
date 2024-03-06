@@ -213,6 +213,26 @@ func (kvs *KVS) AddReplace(replacekvs ...KV) {
 	}
 }
 
+//Pop 弹出key对应的元素
+func (kvs *KVS) Pop(key string) (targetKv *KV, ok bool) {
+	var index int
+	for i, kv := range *kvs {
+		if kv.Key == key {
+			targetKv = &kv
+			index = i
+			ok = true
+			break
+		}
+	}
+	if !ok {
+		return nil, false
+	}
+	newKVs := (*kvs)[:index]
+	newKVs = append(newKVs, (*kvs)[index+1:]...)
+	*kvs = newKVs
+	return targetKv, ok
+}
+
 //AppendRow 在二维数组内增加行,prefix 会自动补齐后缀.
 func (kvs *KVS) AppendRows(rows KVS, prefix string) {
 	prefix = fmt.Sprintf("%s.", strings.TrimRight(prefix, ".")) // 确保以.结尾
