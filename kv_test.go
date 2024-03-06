@@ -114,3 +114,27 @@ func TestArrSlic(t *testing.T) {
 	subArr := arr[1+1:]
 	fmt.Println(subArr)
 }
+
+func TestIndex(t *testing.T) {
+	kvs := KVS{}
+	kvs.Add(KV{
+		Key:   "Dictionary.0.fullname",
+		Value: "viedo.id",
+	}, KV{
+		Key:   "Dictionary.0.type",
+		Value: "int",
+	},
+		KV{
+			Key:   "Dictionary.1.fullname",
+			Value: "viedo.name",
+		},
+		KV{
+			Key:   "Dictionary.1.type",
+			Value: "string",
+		},
+	)
+
+	err := kvs.Index("Dictionary.{index}.fullname")
+	require.NoError(t, err)
+	fmt.Println(kvs.Json(false))
+}
