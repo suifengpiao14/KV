@@ -340,9 +340,13 @@ func JsonToKVS(jsonStr string, namespace string) (kvs KVS) {
 		namespace = fmt.Sprintf("%s.", namespace)
 	}
 	for _, path := range paths {
+		value := result.Get(path).String()
+		path := strings.TrimSuffix(path, "@this")
+		key := fmt.Sprintf("%s%s", namespace, strings.Trim(path, "."))
+		key = strings.Trim(key, ".")
 		kv := KV{
-			Key:   fmt.Sprintf("%s%s", namespace, strings.Trim(path, ".")),
-			Value: result.Get(path).String(),
+			Key:   key,
+			Value: value,
 		}
 		kvs = append(kvs, kv)
 	}
