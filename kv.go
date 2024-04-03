@@ -270,6 +270,8 @@ func (kvs *KVS) AppendRows(rows KVS, prefix string) {
 
 // ReplacePrefix 引用解析获得的新数据，需要批量替换id前缀
 func (kvs *KVS) ReplacePrefix(old, new string) {
+	old = fmt.Sprintf("%s.", strings.TrimSuffix(old, ".")) // 确保以.结尾,避免 Dictionary.1  可以匹配 Dictionary.1.fullname,Dictionary.11.fullname
+	new = fmt.Sprintf("%s.", strings.TrimSuffix(new, "."))
 	for i, kv := range *kvs {
 		if strings.HasPrefix(kv.Key, old) {
 			kv.Key = fmt.Sprintf("%s%s", new, kv.Key[len(old):])
