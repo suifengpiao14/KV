@@ -1,6 +1,7 @@
 package kvstruct
 
 import (
+	"encoding/json"
 	"fmt"
 	"testing"
 
@@ -141,7 +142,24 @@ func TestIndex(t *testing.T) {
 		},
 	)
 
-	err := kvs.Index("Dictionary.{index}.fullname")
+	newKvs, err := kvs.Index("Dictionary.{index}.fullname")
 	require.NoError(t, err)
-	fmt.Println(kvs.Json(false))
+	jsonStr, err := newKvs.Json(false)
+	require.NoError(t, err)
+	fmt.Println(jsonStr)
+}
+
+func TestIndex2(t *testing.T) {
+	kvsJson := `[{"type":"","key":"Dictionary.0.fullname","value":"pagination.index"},{"type":"","key":"Dictionary.0.title","value":"页码"},{"type":"","key":"Dictionary.0.explain","value":""},{"type":"","key":"Dictionary.1.fullname","value":"pagination.size"},{"type":"","key":"Dictionary.1.title","value":"每页数量"},{"type":"","key":"Dictionary.1.explain","value":""},{"type":"","key":"Dictionary.2.fullname","value":"pagination.total"},{"type":"","key":"Dictionary.2.title","value":"总数"},{"type":"","key":"Dictionary.2.explain","value":""},{"type":"","key":"Dictionary.3.fullname","value":"limit.size"},{"type":"","key":"Dictionary.3.title","value":"单次记录数"},{"type":"","key":"Dictionary.3.explain","value":"sql limit size"},{"type":"","key":"Dictionary.4.fullname","value":"limit.offset"},{"type":"","key":"Dictionary.4.title","value":"查询记录偏移量"},{"type":"","key":"Dictionary.4.explain","value":"sql limit ,offset"},{"type":"","key":"Dictionary.5.fullname","value":"class.api.withSelf"},{"type":"","key":"Dictionary.5.title","value":"包含节点本身"},{"type":"","key":"Dictionary.5.explain","value":"获取子分类时，是否返回父节点(1-是,2-否)"},{"type":"","key":"Dictionary.6.fullname","value":"class.api.depth"},{"type":"","key":"Dictionary.6.title","value":"深度"},{"type":"","key":"Dictionary.6.explain","value":"分类是树型结构数据，深度表示数深度，如1表示直接子节点"},{"type":"","key":"Dictionary.7.fullname","value":"request.params.token"},{"type":"","key":"Dictionary.7.title","value":"jwt token"},{"type":"","key":"Dictionary.7.explain","value":"用户登录token"},{"type":"","key":"Dictionary.8.fullname","value":"content.position"},{"type":"","key":"Dictionary.8.title","value":"内容展示位置"},{"type":"","key":"Dictionary.8.explain","value":"前端页面元素位置格式:pageName.elementName[...elementName]"},{"type":"","key":"Dictionary.9.fullname","value":"content.format"},{"type":"","key":"Dictionary.9.title","value":"内容形式"},{"type":"","key":"Dictionary.9.explain","value":"一定的内容需要一定的形式承载，形式确定后，输出的内容格式是固定的"},{"type":"","key":"Dictionary.10.fullname","value":"nav.url"},{"type":"","key":"Dictionary.10.title","value":"导航跳转地址"},{"type":"","key":"Dictionary.10.explain","value":"导航跳转地址"},{"type":"","key":"Dictionary.11.fullname","value":"response.code"},{"type":"","key":"Dictionary.11.title","value":"业务状态码"},{"type":"","key":"Dictionary.11.explain","value":"业务状态码，0-正常，非0-失败"},{"type":"","key":"Dictionary.12.fullname","value":"response.message"},{"type":"","key":"Dictionary.12.title","value":"业务提示"},{"type":"","key":"Dictionary.12.explain","value":"业务提示，失败时，表达失败原因"},{"type":"","key":"Dictionary.13.fullname","value":"cognition.catalog.introduceObj.title"},{"type":"","key":"Dictionary.13.title","value":"标题"},{"type":"","key":"Dictionary.13.explain","value":"课程介绍项标题"},{"type":"","key":"Dictionary.14.fullname","value":"cognition.catalog.introduceObj.content"},{"type":"","key":"Dictionary.14.title","value":"内容"},{"type":"","key":"Dictionary.14.explain","value":"课程介绍项内容"},{"type":"","key":"Dictionary.15.fullname","value":"cognition.catalog.introduceObj.sort"},{"type":"","key":"Dictionary.15.title","value":"排序"},{"type":"","key":"Dictionary.15.explain","value":"课程介绍项排序,倒序"}]`
+	kvs := KVS{}
+	err := json.Unmarshal([]byte(kvsJson), &kvs)
+	require.NoError(t, err)
+	format := "Dictionary.{index}.fullname"
+	newKvs, err := kvs.Index(format)
+	require.NoError(t, err)
+	newKvsJsonb, err := newKvs.Json(false)
+	require.NoError(t, err)
+	newKvsJson := string(newKvsJsonb)
+	fmt.Println(newKvsJson)
+	require.NotContains(t, newKvsJson, "size0")
 }

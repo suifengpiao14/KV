@@ -294,31 +294,30 @@ const (
 )
 
 // Index 使用指定的可以模板值作为新的可以 format 格式为 xxx.{index}.yyy,  将xxx{index} 相同的部分作为一行数据,这行数据中yyy 的值将成为新的key（模拟二维数据依据指定列值转成map格式）,注意.{index}.为固定格式
-func (kvs *KVS) Index(format string) (err error) {
+func (kvs KVS) Index(format string) (newKvs KVS, err error) {
 	arr := strings.SplitN(format, KVS_INDEX_PLACEHOLDLER, 2)
 	if len(arr) != 2 {
 		err = errors.Errorf("required format:  xxx.{index}.yyy ,got %s", format)
-		return err
+		return nil, err
 	}
 	prefix, suffix := arr[0], arr[1]
 	patten := fmt.Sprintf("%s.%%d.%s", prefix, suffix)
-	km := map[string]string{}
-	for _, kv := range *kvs {
+	newKvs = make(KVS, 0)
+	isMatch := false
+	for _, kv := range kvs {
 		var index int
 		_, err = fmt.Sscanf(kv.Key, patten, &index)
 		if err == nil {
-			k := strings.TrimSuffix(kv.Key, "."+suffix)
-			km[k] = fmt.Sprintf("%s.%s", prefix, strings.TrimLeft(kv.Value, "."))
+			isMatch = true
+			kv.Key = fmt.Sprintf("%s.%s.%s", prefix, strings.TrimLeft(kv.Value, "."), suffix)
+			newKvs.AddReplace(kv)
 		}
 	}
-	if len(km) == 0 {
+	if !isMatch {
 		err = errors.Errorf("not match any key, format:%s", format)
-		return err
+		return nil, err
 	}
-	for k, v := range km {
-		kvs.ReplacePrefix(k, v)
-	}
-	return nil
+	return newKvs, nil
 }
 
 // JsonToKVS 将json 转换为key->value 对,key 的规则为github.com/tidwall/gjson 的path
